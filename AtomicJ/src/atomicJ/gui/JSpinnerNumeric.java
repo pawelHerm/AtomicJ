@@ -67,6 +67,11 @@ public class JSpinnerNumeric extends JSpinner implements Accessible
         }
     }
 
+    public double getDoubleValue()
+    {
+        double val = getModel().getDoubleValue();
+        return val;
+    }
 
     public static class NumericSpinnerEditor extends JPanel implements LayoutManager
     {      

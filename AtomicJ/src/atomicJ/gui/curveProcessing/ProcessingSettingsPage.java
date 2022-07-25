@@ -33,7 +33,9 @@ import atomicJ.curveProcessing.SpanType;
 import atomicJ.gui.AbstractWizardPage;
 import atomicJ.gui.ExtensionFileChooser;
 import atomicJ.gui.ForceCurvePlotFactory;
+import atomicJ.gui.JSpinnerNumeric;
 import atomicJ.gui.NumericalField;
+import atomicJ.gui.SpinnerDoubleModel;
 import atomicJ.gui.SubPanel;
 import atomicJ.gui.TopographySelectionWizard;
 import atomicJ.gui.WizardPage;
@@ -173,32 +175,32 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
     private final JFormattedTextField fieldName = new JFormattedTextField(new DefaultFormatter());
     private final JFormattedTextField fieldTopographyFile = new JFormattedTextField(new DefaultFormatter());
 
-    private final NumericalField fieldTipRadius = new NumericalField("Tip radius must be a positive number", Double.MIN_VALUE);
-    private final NumericalField fieldTipAngle = new NumericalField("Tip angle must be a positive number", Double.MIN_VALUE);
+    private final JSpinnerNumeric fieldTipRadius =new JSpinnerNumeric(new SpinnerDoubleModel("Tip radius must be a positive number", Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));
+    private final JSpinnerNumeric fieldTipAngle = new JSpinnerNumeric(new SpinnerDoubleModel("Tip angle must be a positive number", Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));
 
-    private final NumericalField fieldTipExponent = new NumericalField("Tip exponent must be a positive number", Double.MIN_VALUE);
-    private final NumericalField fieldTipFactor = new NumericalField("Tip factor must be a positive number", Double.MIN_VALUE);
+    private final JSpinnerNumeric fieldTipExponent = new JSpinnerNumeric(new SpinnerDoubleModel("Tip exponent must be a positive number",Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));
+    private final JSpinnerNumeric fieldTipFactor = new JSpinnerNumeric(new SpinnerDoubleModel("Tip factor must be a positive number", Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));
 
-    private final NumericalField fieldTipTransitionRadius = new NumericalField("Tip transition radius must be a positive number", Double.MIN_VALUE);
-    private final NumericalField fieldSpringConstant = new NumericalField("Spring constant must be a positive number", Double.MIN_VALUE);	
-    private final NumericalField fieldTrimLeft = new NumericalField("Left cropping must be a nonnegative number", 0);
-    private final NumericalField fieldTrimRight = new NumericalField("Right cropping must be a nonnegative number", 0);
-    private final NumericalField fieldTrimLower = new NumericalField("Lower cropping must be a nonnegative number", 0);
-    private final NumericalField fieldTrimUpper = new NumericalField("Upper cropping must be a nonnegative number", 0);	
-    private final NumericalField fieldPoissonRatio = new NumericalField("Poisson ratio must fall between -1 and 0.5", -1, 0.5);
-    private final NumericalField fieldLoadMaximum = new NumericalField("Load maximum must be a positive number", Double.MIN_VALUE);
-    private final NumericalField fieldIndentMaximum = new NumericalField("Indentation maximum must be a positive number", Double.MIN_VALUE);
+    private final JSpinnerNumeric fieldTipTransitionRadius = new JSpinnerNumeric(new SpinnerDoubleModel("Tip transition radius must be a positive number", Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));
+    private final JSpinnerNumeric fieldSpringConstant = new JSpinnerNumeric(new SpinnerDoubleModel("Spring constant must be a positive number", Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));	
+    private final JSpinnerNumeric fieldTrimLeft = new JSpinnerNumeric(new SpinnerDoubleModel("Left cropping must be a nonnegative number", Double.NaN, 0, Double.MAX_VALUE, 1.0));
+    private final JSpinnerNumeric fieldTrimRight = new JSpinnerNumeric(new SpinnerDoubleModel("Right cropping must be a nonnegative number", Double.NaN, 0, Double.MAX_VALUE, 1.0));
+    private final JSpinnerNumeric fieldTrimLower = new JSpinnerNumeric(new SpinnerDoubleModel("Lower cropping must be a nonnegative number", Double.NaN, 0, Double.MAX_VALUE, 1.0));
+    private final JSpinnerNumeric fieldTrimUpper = new JSpinnerNumeric(new SpinnerDoubleModel("Upper cropping must be a nonnegative number", Double.NaN, 0, Double.MAX_VALUE, 1.0));	
+    private final JSpinnerNumeric fieldPoissonRatio = new JSpinnerNumeric(new SpinnerDoubleModel("Poisson ratio must fall between -1 and 0.5",Double.NaN, -1, 0.5, 0.1));
+    private final JSpinnerNumeric fieldLoadMaximum = new JSpinnerNumeric(new SpinnerDoubleModel("Load maximum must be a positive number", Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));
+    private final JSpinnerNumeric fieldIndentMaximum = new JSpinnerNumeric(new SpinnerDoubleModel("Indentation maximum must be a positive number", Double.NaN, Double.MIN_VALUE, Double.MAX_VALUE, 1.0));
     private final NumericalField fieldSavitzkySpan = new NumericalField("Span must be a nonnegative integer", 0, false);
     private final NumericalField fieldSavitzkyDegree = new NumericalField("Degree must be a nonnegative integer", 0, false);	
-    private final NumericalField fieldLoessSpan = new NumericalField("Span must be a positive number between 0 and 100", Double.MIN_VALUE, 100);
+    private final JSpinnerNumeric fieldLoessSpan = new JSpinnerNumeric(new SpinnerDoubleModel("Span must be a positive number between 0 and 100", Double.NaN, Double.MIN_VALUE, 100, 1.0));
     private final NumericalField fieldIterLocal = new NumericalField("Iteration numbers must be a nonnegative integer", 0, false);
-    private final NumericalField fieldSampleThickness = new NumericalField("Sample thickness must be a positive number", Double.MIN_VALUE);
+    private final JSpinnerNumeric fieldSampleThickness = new JSpinnerNumeric(new SpinnerDoubleModel("Sample thickness must be a positive number",  Double.NaN, Double.MIN_VALUE, 100, 1.0));
 
-    private final EnumMap<PhotodiodeSignalType, NumericalField> fieldsSensitivity = new EnumMap<>(PhotodiodeSignalType.class);
+    private final EnumMap<PhotodiodeSignalType, JSpinnerNumeric> fieldsSensitivity = new EnumMap<>(PhotodiodeSignalType.class);
     {
         for(PhotodiodeSignalType signalType : PhotodiodeSignalType.values())
         {
-            NumericalField fieldSensitivity = new NumericalField("Sensitivity must be a positive number", Double.MIN_VALUE);
+            JSpinnerNumeric fieldSensitivity = new JSpinnerNumeric(new SpinnerDoubleModel("Sensitivity must be a positive number",Double.NaN, Double.MIN_VALUE,Double.MAX_VALUE, 1.0));
             fieldsSensitivity.put(signalType, fieldSensitivity);
         }
     }
@@ -339,7 +341,7 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
             boxUseReadInSensitivity.setSelected(useReadInSensitivity);
             boxUseReadInSensitivity.setEnabled(sensitivityReadInEnabled);
 
-            NumericalField fieldSensitivity = fieldsSensitivity.get(signalType);
+            JSpinnerNumeric fieldSensitivity = fieldsSensitivity.get(signalType);
             fieldSensitivity.setValue(sensitivity);
 
             setSensitivityInputEnabled(signalType, sensitivityInputEnabled);
@@ -544,7 +546,7 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
 
     private void setSensitivityInputEnabled(PhotodiodeSignalType signalType, boolean sensitivityEnabled)
     {
-        NumericalField fieldSensitivity = fieldsSensitivity.get(signalType);
+        JSpinnerNumeric fieldSensitivity = fieldsSensitivity.get(signalType);
         fieldSensitivity.setEnabled(sensitivityEnabled);
 
         Action calibrateAction = calibrateActions.get(signalType);
@@ -668,9 +670,9 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                 }
                 else if(LOESS_SPAN.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldLoessSpan.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldLoessSpan.getDoubleValue();
+                    if(Double.compare(newVal,oldVal)!= 0)
                     {
                         fieldLoessSpan.setValue(newVal);
                     }
@@ -759,7 +761,7 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                 else if(SAMPLE_THICKNESS.equals(property))
                 {
                     double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    double oldVal = fieldSampleThickness.getValue().doubleValue() ;
+                    double oldVal = fieldSampleThickness.getDoubleValue();
                     if(Double.compare(oldVal, newVal) != 0)
                     {
                         fieldSampleThickness.setValue(newVal);
@@ -918,19 +920,19 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                 }
                 else if(POISSON_RATIO.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldPoissonRatio.getValue().doubleValue();
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldPoissonRatio.getDoubleValue();
 
-                    if(!(newVal.equals(oldVal)))
+                    if(Double.compare(newVal,oldVal)!=0)
                     {
                         fieldPoissonRatio.setValue(newVal);
                     }
                 }
                 else if(SPRING_CONSTANT.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldSpringConstant.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldSpringConstant.getDoubleValue();
+                    if(Double.compare(newVal,oldVal)!=0)
                     {
                         fieldSpringConstant.setValue(newVal);
                     }
@@ -1050,12 +1052,12 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
 
                     for(Entry<PhotodiodeSignalType, Double> entry : sensitivitiesMap.entrySet())
                     {
-                        Double valNew = entry.getValue();
+                        double valNew = entry.getValue();
 
-                        NumericalField fieldSensitivity = fieldsSensitivity.get(entry.getKey());
-                        Double valOld = fieldSensitivity.getValue().doubleValue();
+                        JSpinnerNumeric fieldSensitivity = fieldsSensitivity.get(entry.getKey());
+                        double valOld = fieldSensitivity.getDoubleValue();
 
-                        if(!(valNew.equals(valOld)))
+                        if(Double.compare(valNew,valOld) != 0)
                         {
                             fieldSensitivity.setValue(valNew);
                         }
@@ -1104,27 +1106,27 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                 }
                 else if(TIP_RADIUS.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTipRadius.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTipRadius.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTipRadius.setValue(newVal);
                     }
                 }
                 else if(TIP_HALF_ANGLE.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTipAngle.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTipAngle.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTipAngle.setValue(newVal);
                     }
                 }
                 else if(TIP_TRANSITION_RADIUS.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTipTransitionRadius.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTipTransitionRadius.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTipTransitionRadius.setValue(newVal);
                     }
@@ -1136,72 +1138,72 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                 }
                 else if(TIP_EXPONENT.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTipExponent.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTipExponent.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTipExponent.setValue(newVal);
                     }
                 }
                 else if(TIP_FACTOR.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTipFactor.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTipFactor.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTipFactor.setValue(newVal);
                     }
                 }
                 else if(LEFT_CROPPING.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTrimLeft.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTrimLeft.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTrimLeft.setValue(newVal);
                     }
                 }
                 else if(RIGHT_CROPPING.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTrimRight.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTrimRight.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTrimRight.setValue(newVal);
                     }
                 }
                 else if(LOWER_CROPPING.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTrimLower.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTrimLower.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTrimLower.setValue(newVal);
                     }
                 }
                 else if(UPPER_CROPPING.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldTrimUpper.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldTrimUpper.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldTrimUpper.setValue(newVal);
                     }
                 }
                 else if(LOAD_LIMIT.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldLoadMaximum.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldLoadMaximum.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldLoadMaximum.setValue(newVal);
                     }
                 }
                 else if(INDENTATION_LIMIT.equals(property))
                 {
-                    Double newVal = ((Number)evt.getNewValue()).doubleValue();
-                    Double oldVal = fieldIndentMaximum.getValue().doubleValue();
-                    if(!(newVal.equals(oldVal)))
+                    double newVal = ((Number)evt.getNewValue()).doubleValue();
+                    double oldVal = fieldIndentMaximum.getDoubleValue();
+                    if(Double.compare(newVal,oldVal) != 0)
                     {
                         fieldIndentMaximum.setValue(newVal);
                     }
@@ -1327,118 +1329,118 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
 
     private void initNumericFieldListeners()
     {
-        fieldTipRadius.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldTipRadius.addChangeListener(new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTipRadius.getDoubleValue();
                 model.setTipRadius(valueNew);                
             }
         });
-        fieldTipAngle.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {
+        fieldTipAngle.addChangeListener(new ChangeListener() {
 
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTipAngle.getDoubleValue();
                 model.setTipHalfAngle(valueNew);
             }
         });
-        fieldTipTransitionRadius.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldTipTransitionRadius.addChangeListener( new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTipTransitionRadius.getDoubleValue();
                 model.setTipTransitionRadius(valueNew);
             }
         });
-        fieldTipExponent.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {         
+        fieldTipExponent.addChangeListener(new ChangeListener() {         
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTipExponent.getDoubleValue();
                 model.setTipExponent(valueNew);
             }
         });
-        fieldTipFactor.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldTipFactor.addChangeListener(new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTipFactor.getDoubleValue();
                 model.setTipFactor(valueNew);
             }
         });
-        fieldSpringConstant.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldSpringConstant.addChangeListener(new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldSpringConstant.getDoubleValue();
                 model.setSpringConstant(valueNew);
             }
         });	
-        for(Entry<PhotodiodeSignalType, NumericalField> entry : fieldsSensitivity.entrySet())
+        for(Entry<PhotodiodeSignalType, JSpinnerNumeric> entry : fieldsSensitivity.entrySet())
         {
-            NumericalField fieldSensitivity = entry.getValue();
+            JSpinnerNumeric fieldSensitivity = entry.getValue();
             final PhotodiodeSignalType signalType = entry.getKey();
 
-            fieldSensitivity.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() 
+            fieldSensitivity.addChangeListener(new ChangeListener() 
             {            
                 @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    double valueNew = ((Number)evt.getNewValue()).doubleValue();
+                public void stateChanged(ChangeEvent evt) {
+                    double valueNew = fieldSensitivity.getDoubleValue();
                     model.setSensitivity(signalType, valueNew);
                 }
             });
         }
 
-        fieldTrimLeft.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {
+        fieldTrimLeft.addChangeListener(new ChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTrimLeft.getDoubleValue();
                 model.setLeftCropping(valueNew);
             }
         });
-        fieldTrimRight.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {            
+        fieldTrimRight.addChangeListener(new ChangeListener() {            
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTrimRight.getDoubleValue();
                 model.setRightCropping(valueNew);
             }
         });
-        fieldTrimLower.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {            
+        fieldTrimLower.addChangeListener(new ChangeListener() {            
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTrimLower.getDoubleValue();
                 model.setLowerCropping(valueNew);
             }
         });
-        fieldTrimUpper.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {
+        fieldTrimUpper.addChangeListener(new ChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldTrimUpper.getDoubleValue();
                 model.setUpperCropping(valueNew);
             }
         });		
 
-        fieldPoissonRatio.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldPoissonRatio.addChangeListener(new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldPoissonRatio.getDoubleValue();
                 model.setPoissonRatio(valueNew);
             }
         });		
-        fieldLoadMaximum.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldLoadMaximum.addChangeListener(new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldLoadMaximum.getDoubleValue();
                 model.setLoadLimit(valueNew);
             }
         });
-        fieldIndentMaximum.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldIndentMaximum.addChangeListener(new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue(); 
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldIndentMaximum.getDoubleValue(); 
                 model.setIndentationLimit(valueNew);
             }
         });		
-        fieldLoessSpan.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {            
+        fieldLoessSpan.addChangeListener(new ChangeListener() {            
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldLoessSpan.getDoubleValue();
                 model.setLoessSpan(valueNew);
             }
         });
@@ -1463,10 +1465,10 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                 model.setSavitzkyDegree(valueNew);
             }
         });
-        fieldSampleThickness.addPropertyChangeListener(VALUE_EDITED, new PropertyChangeListener() {           
+        fieldSampleThickness.addChangeListener(new ChangeListener() {           
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                double valueNew = ((Number)evt.getNewValue()).doubleValue();
+            public void stateChanged(ChangeEvent evt) {
+                double valueNew = fieldSampleThickness.getDoubleValue();
                 model.setSampleThickness(valueNew);
             }
         });
@@ -2165,7 +2167,7 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
 
         for(PhotodiodeSignalType signalType : PhotodiodeSignalType.values())
         {
-            NumericalField fieldSensitivity = fieldsSensitivity.get(signalType);
+            JSpinnerNumeric fieldSensitivity = fieldsSensitivity.get(signalType);
             JCheckBox boxUseReadInSensitivity = boxesUseReadInSensitivity.get(signalType);
             JLabel labelSensitivity = labelsSensitivity.get(signalType);
             JButton buttonCalibrate = buttonsCalibrate.get(signalType);
@@ -2194,7 +2196,7 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
     {
         for(PhotodiodeSignalType signalType : PhotodiodeSignalType.values())
         {
-            NumericalField fieldSensitivity = fieldsSensitivity.get(signalType);
+            JSpinnerNumeric fieldSensitivity = fieldsSensitivity.get(signalType);
             JCheckBox boxUseReadInSensitivity = boxesUseReadInSensitivity.get(signalType);
             JLabel labelSensitivity = labelsSensitivity.get(signalType);
             JButton buttonCalibrate = buttonsCalibrate.get(signalType);
