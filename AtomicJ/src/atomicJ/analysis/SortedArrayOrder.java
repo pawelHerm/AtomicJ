@@ -97,6 +97,14 @@ public enum SortedArrayOrder
         return order;
     }
 
+    public static SortedArrayOrder getInitialOrder(List<Double> values)
+    {
+        boolean xDescending = isInitiallyDescending(values);
+        SortedArrayOrder order = xDescending ? DESCENDING : ASCENDING;
+
+        return order;
+    }
+    
     public static SortedArrayOrder getInitialXOrder(List<double[]> sortedPoints)
     {
         boolean xDescending = isInitiallyXDescending(sortedPoints);
@@ -152,6 +160,10 @@ public enum SortedArrayOrder
     private static boolean isInitiallyDescending(double[] values)
     {
         int n = values.length;
+        if(n < 2)
+        {
+            return true;
+        }
 
         boolean descending = false;
         double previous = values[0];
@@ -173,10 +185,43 @@ public enum SortedArrayOrder
         return descending;
     }
 
+    
+    private static boolean isInitiallyDescending(List<Double> values)
+    {
+        int n = values.size();
+        if(n < 2)
+        {
+            return true;
+        }
+
+        boolean descending = false;
+        double previous = values.get(0);
+
+        for(int i = 0; i<n; i++)
+        {
+            double current = values.get(i);
+            if(Double.compare(current, previous) != 0)
+            {
+                descending = previous > current;
+                return descending;
+            }
+            else
+            {
+                previous = current;
+            }
+        }
+
+        return descending;
+    }
+
 
     private static boolean isInitiallyXDescending(double[][] points)
     {
         int n = points.length;
+        if(n < 2)
+        {
+            return true;
+        }
 
         boolean descending = false;
         double previous = points[0][0];
@@ -201,6 +246,10 @@ public enum SortedArrayOrder
     private static boolean isInitiallyXDescending(List<double[]> points)
     {
         int n = points.size();
+        if(n < 2)
+        {
+            return true;
+        }
 
         boolean descending = false;
         double previous = points.get(0)[0];

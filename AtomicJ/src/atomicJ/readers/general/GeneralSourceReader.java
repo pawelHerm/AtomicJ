@@ -50,6 +50,7 @@ import atomicJ.readers.regularImage.PNGSourceReader;
 import atomicJ.readers.regularImage.TIFFSourceReader;
 import atomicJ.readers.regularImage.ZeissImageReader;
 import atomicJ.readers.regularImage.ZeissSourceReader;
+import atomicJ.readers.shimadzu.ShimadzuSourceReader;
 import atomicJ.readers.text.CSVSourceReader;
 import atomicJ.readers.text.TSVSourceReader;
 import atomicJ.readers.wsxm.WSxMSourceReader;
@@ -77,6 +78,7 @@ public class GeneralSourceReader implements SourceReader<ChannelSource>
         readers.add(new NIDSourceReader());
         readers.add(new NanopullerSourceReader());
         readers.add(new AnasysSourceReader());
+        readers.add(new ShimadzuSourceReader());
         readers.add(new GwyddionGwySourceReader());
         readers.add(new GwyddionGsfSourceReader());
         readers.add(new WSxMSourceReader());
@@ -111,6 +113,7 @@ public class GeneralSourceReader implements SourceReader<ChannelSource>
         allAcceptedExtensions.addAll(Arrays.asList(AFMWorkshopSourceReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(NIDSourceReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(AnasysSourceReader.getAcceptedExtensions()));
+        allAcceptedExtensions.addAll(Arrays.asList(ShimadzuSourceReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(InnovaSourceReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(NanopullerSourceReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(GwyddionGwySourceReader.getAcceptedExtensions()));

@@ -1014,6 +1014,7 @@ public class NumberAxisLightweight extends ValueAxis implements Cloneable, Seria
         RectangleInsets tickLabelInsets = getTickLabelInsets();
         double result = tickLabelInsets.getLeft() + tickLabelInsets.getRight();
 
+        
         if (isVerticalTickLabels()) {
             // all tick labels have the same width (equal to the height of the
             // font)...
@@ -1021,11 +1022,11 @@ public class NumberAxisLightweight extends ValueAxis implements Cloneable, Seria
             LineMetrics lm = getTickLabelFont().getLineMetrics("0", frc);
             result += lm.getHeight();
         }
-        else {
+        else {                       
             // look at lower and upper bounds...
             FontMetrics fm = g2.getFontMetrics(getTickLabelFont());
             Range range = getRange();
-            double lower = MathUtilities.roundToMultiple(range.getLowerBound(), unit.getSize());//changes introduced by PH to avoid instabilities of tick labels when the range is slightly increased, that were caused by fractionalpart of numbers in ticks
+            double lower = MathUtilities.roundToMultiple(range.getLowerBound(), unit.getSize());//changes introduced by PH to avoid instabilities of tick labels when the range is slightly increased, that were caused by fractional part of numbers in ticks
             double upper = MathUtilities.roundToMultiple(range.getUpperBound(), unit.getSize());//changes introduced by PH
             String lowerStr = "";
             String upperStr = "";

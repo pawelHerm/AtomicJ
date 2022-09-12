@@ -52,6 +52,8 @@ import atomicJ.readers.regularImage.JPEGSourceReaderFactory;
 import atomicJ.readers.regularImage.PNGSourceReaderFactory;
 import atomicJ.readers.regularImage.TIFFSourceReaderFactory;
 import atomicJ.readers.regularImage.ZeissSourceReaderFactory;
+import atomicJ.readers.shimadzu.ShimadzuSourceReaderFactory;
+import atomicJ.readers.shimadzu.ShimadzuSpectroscopyReader;
 import atomicJ.readers.text.CSVSourceReaderFactory;
 import atomicJ.readers.text.TSVSourceReaderFactory;
 import atomicJ.readers.wsxm.WSxMSourceReaderFactory;
@@ -62,8 +64,7 @@ public class GeneralSourceReadingModel implements SourceReadingModel<ChannelSour
 {
     private ChannelFilter dataFilter = PermissiveChannelFilter.getInstance();
 
-    private final Map<FileFilter, 
-    SourceReaderFactory<? extends SourceReader<ChannelSource>>> readerFilterMap = new LinkedHashMap<>();
+    private final Map<FileFilter, SourceReaderFactory<? extends SourceReader<ChannelSource>>> readerFilterMap = new LinkedHashMap<>();
     private final Map<String, FileFilter> filterNameMap = new LinkedHashMap<>();
 
     private final FileFilter defaultFilter;
@@ -84,6 +85,7 @@ public class GeneralSourceReadingModel implements SourceReadingModel<ChannelSour
         NIDSourceReaderFactory nanosurf = new NIDSourceReaderFactory();
         NanopullerSourceReaderFactory nanopuller = new NanopullerSourceReaderFactory();
         AnasysSourceReaderFactory anasys = new AnasysSourceReaderFactory();
+        ShimadzuSourceReaderFactory shimadzu = new ShimadzuSourceReaderFactory();
         GwyddionGwySourceReaderFactory gwy = new GwyddionGwySourceReaderFactory();
         GwyddionGsfSourceReaderFactory gsf = new GwyddionGsfSourceReaderFactory();
         WSxMSourceReaderFactory wsxm = new WSxMSourceReaderFactory();
@@ -112,6 +114,7 @@ public class GeneralSourceReadingModel implements SourceReadingModel<ChannelSour
         readerFilterMap.put(nanosurf.getFileFilter(), nanosurf);
         readerFilterMap.put(nanopuller.getFileFilter(), nanopuller);
         readerFilterMap.put(anasys.getFileFilter(), anasys);
+        readerFilterMap.put(shimadzu.getFileFilter(), shimadzu);
         readerFilterMap.put(gwy.getFileFilter(), gwy);
         readerFilterMap.put(gsf.getFileFilter(), gsf);
         readerFilterMap.put(wsxm.getFileFilter(), wsxm);

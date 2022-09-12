@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.util.Locale;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import javax.swing.text.InternationalFormatter;
 import javax.swing.text.NumberFormatter;
 
@@ -86,6 +87,7 @@ public class NumericalField extends JFormattedTextField
         super(new PermissiveNumberFormatter(format, min, max, acceptReals));
         setColumns(6);
 
+        setHorizontalAlignment(SwingConstants.RIGHT);
         this.messageDisplayer = new DefaultMessageDisplayer(this);
         this.invalidInputMessage = invalidInputMessage;
     }
@@ -95,6 +97,7 @@ public class NumericalField extends JFormattedTextField
         super(formatter);
         setColumns(6);
 
+        setHorizontalAlignment(SwingConstants.RIGHT);
         this.messageDisplayer = new DefaultMessageDisplayer(this);
         this.invalidInputMessage = invalidInputMessage;
     }
@@ -205,6 +208,5 @@ public class NumericalField extends JFormattedTextField
         @Override
         public void clearMessage() {            
         }
-
     }
 }

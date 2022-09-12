@@ -33,16 +33,7 @@ public class FlexibleChannel1DData implements Channel1DData
 
     public static FlexibleChannel1DData getInstance(double[] xValues, double[] yValues, Quantity xQuantity, Quantity yQuantity, SortedArrayOrder desiredOrder)
     {
-        Validation.requireTwoArraysNonNullAndOfEqualLengthParameterName(xValues, yValues, "ys", "errorValues");
-
-        int n = xValues.length;
-
-        double[][] points = new double[n][];
-        for(int i = 0; i < n; i++)
-        {
-            points[i] = new double[] {xValues[i], yValues[i]};
-        }
-
+        double[][] points = ArrayUtilities.combineTo2DArray(xValues, yValues);       
         points = desiredOrder.sortX(points);
 
         return new FlexibleChannel1DData(points, xQuantity, yQuantity, desiredOrder);

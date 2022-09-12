@@ -40,11 +40,11 @@ import atomicJ.readers.nanoscope.NanoscopeGeneralSpectroscopyReader;
 import atomicJ.readers.nanosurf.NIDSpectroscopyReader;
 import atomicJ.readers.park.ParkSpectroscopyReader;
 import atomicJ.readers.park.ParkSpectroscopyTextReader;
+import atomicJ.readers.shimadzu.ShimadzuSpectroscopyReader;
 import atomicJ.readers.text.CSVSpectroscopyReader;
 import atomicJ.readers.text.TSVSpectroscopyReader;
 import atomicJ.readers.wsxm.WSXMSpectroscopyReader;
 import atomicJ.sources.SimpleSpectroscopySource;
-
 
 
 public class GeneralSpectroscopyReader implements SourceReader<SimpleSpectroscopySource>
@@ -73,6 +73,7 @@ public class GeneralSpectroscopyReader implements SourceReader<SimpleSpectroscop
         readers.add(new NIDSpectroscopyReader());
         readers.add(new NanopullerSpectroscopyReader());
         readers.add(new AnasysSpectroscopyReader());
+        readers.add(new ShimadzuSpectroscopyReader());
         readers.add(new GwyddionGwySpectroscopyReader());
         readers.add(new WSXMSpectroscopyReader());
         readers.add(new CSVSpectroscopyReader());
@@ -95,6 +96,7 @@ public class GeneralSpectroscopyReader implements SourceReader<SimpleSpectroscop
         allAcceptedExtensions.addAll(Arrays.asList(NIDSpectroscopyReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(NanopullerSpectroscopyReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(AnasysSpectroscopyReader.getAcceptedExtensions()));
+        allAcceptedExtensions.addAll(Arrays.asList(ShimadzuSpectroscopyReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(GwyddionGwySpectroscopyReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(WSXMSpectroscopyReader.getAcceptedExtensions()));
         allAcceptedExtensions.addAll(Arrays.asList(CSVSpectroscopyReader.getAcceptedExtensions()));

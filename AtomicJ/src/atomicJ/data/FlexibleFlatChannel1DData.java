@@ -20,12 +20,9 @@ public class FlexibleFlatChannel1DData implements Channel1DData
     private final Quantity yQuantity;
 
     public FlexibleFlatChannel1DData(double[] xValues, double[] yValues, Quantity xQuantity, Quantity yQuantity, SortedArrayOrder order)
-    {
-        if(xValues.length != yValues.length)
-        {
-            throw new IllegalArgumentException("The lists xValues and yValues should be of equal length");
-        }
-
+    {      
+        Validation.requireTwoArraysNonNullAndOfEqualLengthParameterName(xValues, yValues, "xValues", "yValues");    
+        
         this.xValues = xValues;
         this.yValues = yValues;
         this.xOrder = order;

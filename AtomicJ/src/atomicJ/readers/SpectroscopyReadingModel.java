@@ -42,6 +42,7 @@ import atomicJ.readers.nanoscope.NanoscopeGeneralSpectroscopyReaderFactory;
 import atomicJ.readers.nanosurf.NIDSpectroscopyReaderFactory;
 import atomicJ.readers.park.ParkSpectroscopyReaderFactory;
 import atomicJ.readers.park.ParkSpectroscopyTextReaderFactory;
+import atomicJ.readers.shimadzu.ShimadzuSpectroscopyReaderFactory;
 import atomicJ.readers.text.CSVSpectroscopyReaderFactory;
 import atomicJ.readers.text.TSVSpectroscopyReaderFactory;
 import atomicJ.readers.wsxm.WSxMSpectroscopyReaderFactory;
@@ -73,6 +74,7 @@ public class SpectroscopyReadingModel implements SourceReadingModel<SimpleSpectr
         NIDSpectroscopyReaderFactory nanosurf = new NIDSpectroscopyReaderFactory();
         NanopullerSpectroscopyReaderFactory nanopuller = new NanopullerSpectroscopyReaderFactory();
         AnasysSpectroscopyReaderFactory anasys = new AnasysSpectroscopyReaderFactory();
+        ShimadzuSpectroscopyReaderFactory shimadzu = new ShimadzuSpectroscopyReaderFactory();
         GwyddionGwySpectroscopyReaderFactory gwy = new GwyddionGwySpectroscopyReaderFactory();
         WSxMSpectroscopyReaderFactory wsxm = new WSxMSpectroscopyReaderFactory();
         CSVSpectroscopyReaderFactory csv = new CSVSpectroscopyReaderFactory();
@@ -94,6 +96,7 @@ public class SpectroscopyReadingModel implements SourceReadingModel<SimpleSpectr
         readerFilterMap.put(nanosurf.getFileFilter(), nanosurf);
         readerFilterMap.put(nanopuller.getFileFilter(), nanopuller);
         readerFilterMap.put(anasys.getFileFilter(), anasys);
+        readerFilterMap.put(shimadzu.getFileFilter(), shimadzu);
         readerFilterMap.put(gwy.getFileFilter(), gwy);
         readerFilterMap.put(wsxm.getFileFilter(), wsxm);
         readerFilterMap.put(csv.getFileFilter(), csv);

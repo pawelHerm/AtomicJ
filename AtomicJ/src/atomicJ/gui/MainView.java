@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
@@ -333,7 +334,7 @@ public class MainView implements SpectroscopyResultDestination, SpectroscopyProc
 
     @Override
     public void publishPreviewData(Map<SpectroscopyBasicResource, Map<String,ChannelChart<?>>> charts)
-    {
+    {        
         if(!charts.isEmpty())
         {
             int previousCount = previewView.getResourceCount();

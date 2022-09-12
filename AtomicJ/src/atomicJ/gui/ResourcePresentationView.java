@@ -1033,7 +1033,7 @@ extends AbstractChartView<V,E> implements StyleSupervisor
             @Override
             public void keyPressed(KeyEvent e) 
             {
-                if (e.getKeyCode() == KeyEvent.VK_DELETE)
+                if(e.getKeyCode() == KeyEvent.VK_DELETE)
                 {
                     int[] selectedIndices = resourceList.getSelectedIndices();          		
                     removeItems(selectedIndices);
@@ -1330,7 +1330,6 @@ extends AbstractChartView<V,E> implements StyleSupervisor
 
     private class SelectionSaveableChartSource <V> implements SaveableChartSource<V>
     {
-
         @Override
         public int getChartWidth() 
         {

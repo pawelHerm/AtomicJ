@@ -42,7 +42,7 @@ public class Channel1DAveragingInDomainIntersection implements Channel1DMultiTra
         Validation.requireNonNullAndNonEmptyParameterName(channels, "channels");
 
         List<Channel1DData> channelsWithTheSameUnits = getChannelDataWhoseQuantitiesUseTheSameUnits(channels);
-
+        
         List<ClosedInterval> xIntervals = new ArrayList<>();
 
         for(Channel1DData channelData : channelsWithTheSameUnits)
@@ -89,8 +89,9 @@ public class Channel1DAveragingInDomainIntersection implements Channel1DMultiTra
     private List<Channel1DData> getChannelDataWhoseQuantitiesUseTheSameUnits(List<Channel1DData> channels)
     {       
         List<Channel1DData> channelsWithTheSameUnits = new ArrayList<>();
-
         Channel1DData firstChannel = channels.get(0);//we already checked that the channels list is not empty
+        channelsWithTheSameUnits.add(firstChannel);
+      
         Quantity firstChannelXQuantity = firstChannel.getXQuantity();
         Quantity firstChannelYQuantity = firstChannel.getYQuantity();
 

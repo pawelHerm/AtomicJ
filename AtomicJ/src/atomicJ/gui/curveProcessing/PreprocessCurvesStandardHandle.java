@@ -3,6 +3,7 @@ package atomicJ.gui.curveProcessing;
 import java.awt.Window;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
@@ -17,11 +18,11 @@ import atomicJ.sources.SimpleSpectroscopySource;
 
 public class PreprocessCurvesStandardHandle implements PreprocessCurvesHandler, PreviewDestination
 {
-    private final SpectroscopyView spectroscopyDialog;
+    private final SpectroscopyView spectroscopyView;
 
-    public PreprocessCurvesStandardHandle(SpectroscopyView spectroscopyDialog)
+    public PreprocessCurvesStandardHandle(SpectroscopyView spectroscopyView)
     {
-        this.spectroscopyDialog = spectroscopyDialog;
+        this.spectroscopyView = spectroscopyView;
     }
 
     @Override
@@ -41,17 +42,19 @@ public class PreprocessCurvesStandardHandle implements PreprocessCurvesHandler, 
     @Override
     public Window getPublicationSite() 
     {
-        return spectroscopyDialog.getAssociatedWindow();
+        return spectroscopyView.getAssociatedWindow();
     }
 
     @Override
-    public void publishPreviewData(Map<SpectroscopyBasicResource, Map<String, ChannelChart<?>>> charts) {
-
+    public void publishPreviewData(Map<SpectroscopyBasicResource, Map<String, ChannelChart<?>>> charts) 
+    {             
         if(!charts.isEmpty())
         {
-            spectroscopyDialog.addResources(charts);
-            spectroscopyDialog.selectResource(0);
-            spectroscopyDialog.setVisible(true);
+            int index = spectroscopyView.getResourceCount();
+            
+            spectroscopyView.addResources(charts);
+            spectroscopyView.selectResource(index);
+            spectroscopyView.setVisible(true);    
         }
     }
 

@@ -136,11 +136,13 @@ implements PreviewDestination, ResourceView<SpectroscopyBasicResource, Channel1D
             addDataViewListener(new DataViewAdapter() {
 
                 @Override
-                public void dataViewVisibilityChanged(boolean visibleNew) {
-                    clear();
-
+                public void dataViewVisibilityChanged(boolean visibleNew) 
+                {
+                    if(!visibleNew)
+                    {
+                        clear();
+                    }
                 }
-
             });
         }
     }
@@ -344,6 +346,7 @@ implements PreviewDestination, ResourceView<SpectroscopyBasicResource, Channel1D
         if(!charts.isEmpty())
         {
             int previousCount = getResourceCount();
+                        
             addResources(charts);
             selectResource(previousCount);
         }

@@ -135,6 +135,10 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
     private final JCheckBox boxShowAveragedIndentation = new JCheckBox("Indentation");
     private final JCheckBox boxShowAveragedPointwiseModulus = new JCheckBox("Pointwise modulus");
 
+    private final JSpinner spinnerAveragedRecordedCurvePointCount = new JSpinner(new SpinnerNumberModel(30,1,Integer.MAX_VALUE,1));
+    private final JSpinner spinnerAveragedIndentationPointCount = new JSpinner(new SpinnerNumberModel(30,1,Integer.MAX_VALUE,1));
+    private final JSpinner spinnerAveragedPointwiseModulusPointCount = new JSpinner(new SpinnerNumberModel(30,1,Integer.MAX_VALUE,1));
+  
     private final JComboBox<ErrorBarType> comboErrorBarType = new JComboBox<>(ErrorBarType.values());
 
     private final JCheckBox boxIncludeCurvesInMaps = new JCheckBox("Include in maps");
@@ -254,7 +258,7 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
         this.substrateSelectionWizard = new TopographySelectionWizard("Sample topography assistant", model.getPreviewDestination(), model);
 
         pullModelProperties();		
-        initNumericFieldListeners();
+        initNumericSpinnerListeners();
         initTextFieldListener();
         initItemListener();
         initChangeListener();
@@ -420,6 +424,16 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
         boxShowAveragedIndentation.setSelected(showAveragedIndentationCurve);
         boxShowAveragedPointwiseModulus.setSelected(showAveragedPointwiseModulusCurve);
 
+        int averagedRecordedCurvesPointCount = model.getAveragedRecordedCurvesPointCount();
+        int averagedIndentationPointCount = model.getAveragedIndentationCurvesPointCount();
+        int averagdPointwiseModulusPointCount = model.getAveragedIndentationCurvesPointCount();
+        
+        spinnerAveragedRecordedCurvePointCount.setValue(averagedRecordedCurvesPointCount);
+        spinnerAveragedIndentationPointCount.setValue(averagedIndentationPointCount);
+        spinnerAveragedPointwiseModulusPointCount.setValue(averagdPointwiseModulusPointCount);
+        
+        setConsistentWithAveragingEnabled(model.isAveragingEnabled());
+        
         comboErrorBarType.setSelectedItem(averagedCurvesErrorBarType);
 
         boxPlotIndentation.setSelected(plotIndentation);
@@ -594,6 +608,19 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
         //transition radius
         fieldTipTransitionRadius.setEnabled(transitionRadiusNeeded);
         labelTipTransitionRadius.setEnabled(transitionRadiusNeeded);
+    }
+    
+    private void setConsistentWithAveragingEnabled(boolean averagingEnabled)
+    {
+        boxShowAveragedRecordedCurve.setEnabled(averagingEnabled);
+        boxShowAveragedIndentation.setEnabled(averagingEnabled);
+        boxShowAveragedPointwiseModulus.setEnabled(averagingEnabled);
+
+        spinnerAveragedRecordedCurvePointCount.setEnabled(averagingEnabled);
+        spinnerAveragedIndentationPointCount.setEnabled(averagingEnabled);
+        spinnerAveragedPointwiseModulusPointCount.setEnabled(averagingEnabled);
+        
+        comboErrorBarType.setEnabled(averagingEnabled);
     }
 
     private PropertyChangeListener buildModelListener() 
@@ -836,6 +863,11 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                         boxPlotModulusFit.setSelected(newVal);
                     }
                 }
+                else if(CURVE_AVERAGING_ENABLED.equals(property))
+                {
+                    boolean newVal = (boolean)evt.getNewValue();
+                    setConsistentWithAveragingEnabled(newVal);
+                }
                 else if(SHOW_AVERAGED_RECORDED_CURVES.equals(property))
                 {
                     boolean newVal = (boolean)evt.getNewValue();
@@ -861,6 +893,33 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
                     if(newVal != oldVal)
                     {
                         boxShowAveragedPointwiseModulus.setSelected(newVal);
+                    }
+                }
+                else if(AVERAGED_RECORDED_CURVES_POINT_COUNT.equals(property))
+                {
+                    int newVal = ((Number)evt.getNewValue()).intValue();
+                    int oldVal = ((Number)spinnerAveragedRecordedCurvePointCount.getValue()).intValue();
+                    if(newVal != oldVal)
+                    {
+                        spinnerAveragedRecordedCurvePointCount.setValue(newVal);
+                    }
+                }
+                else if(AVERAGED_INDENTATION_CURVES_POINT_COUNT.equals(property))
+                {
+                    int newVal = ((Number)evt.getNewValue()).intValue();
+                    int oldVal = ((Number)spinnerAveragedIndentationPointCount.getValue()).intValue();
+                    if(newVal != oldVal)
+                    {
+                        spinnerAveragedIndentationPointCount.setValue(newVal);
+                    }
+                }
+                else if(AVERAGED_POINTWISE_MODULUS_CURVES_POINT_COUNT.equals(property))
+                {
+                    int newVal = ((Number)evt.getNewValue()).intValue();
+                    int oldVal = ((Number)spinnerAveragedPointwiseModulusPointCount.getValue()).intValue();
+                    if(newVal != oldVal)
+                    {
+                        spinnerAveragedPointwiseModulusPointCount.setValue(newVal);
                     }
                 }
                 else if(AVERAGED_CURVES_ERROR_BAR_TYPE.equals(property))
@@ -1327,7 +1386,7 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
         });
     }
 
-    private void initNumericFieldListeners()
+    private void initNumericSpinnerListeners()
     {
         fieldTipRadius.addChangeListener(new ChangeListener() {           
             @Override
@@ -1790,7 +1849,6 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
         });
 
         spinnerPostcontactDegree.addChangeListener(new ChangeListener() {
-
             @Override
             public void stateChanged(ChangeEvent e) {
                 int postcontactDegreeNew = ((SpinnerNumberModel)spinnerPostcontactDegree.getModel()).getNumber().intValue();
@@ -1798,6 +1856,32 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
             }
         });
 
+        spinnerAveragedRecordedCurvePointCount.addChangeListener(new ChangeListener() {            
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int pointCountNew = ((Number)spinnerAveragedRecordedCurvePointCount.getValue()).intValue();
+                model.setAveragedRecordedCurvesPointCount(pointCountNew);
+            }
+        });
+             
+        spinnerAveragedIndentationPointCount.addChangeListener(new ChangeListener() {
+            
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int pointCountNew = ((Number)spinnerAveragedIndentationPointCount.getValue()).intValue();
+                model.setAveragedIndentationCurvesPointCount(pointCountNew);
+            }
+        });
+
+        spinnerAveragedPointwiseModulusPointCount.addChangeListener(new ChangeListener() {
+            
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int pointCountNew = ((Number)spinnerAveragedPointwiseModulusPointCount.getValue()).intValue();
+                model.setAveragedPointwiseModulusCurvesPointCount(pointCountNew);
+            }
+        });
+   
         spinnerJumpsSpan.addChangeListener(new ChangeListener() 
         {           
             @Override
@@ -2388,11 +2472,18 @@ public class ProcessingSettingsPage extends AbstractWizardPage implements Wizard
 
         SubPanel panelAveragedCurves = new SubPanel();
 
-        panelAveragedCurves.addComponent(boxShowAveragedRecordedCurve, 0, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, 1, 1);
-        panelAveragedCurves.addComponent(boxShowAveragedIndentation, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, 1, 1);
-        panelAveragedCurves.addComponent(boxShowAveragedPointwiseModulus, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, 1, 1);
-        panelAveragedCurves.addComponent(new JLabel("Error bars"), 0, 2, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, 1, 1);
-        panelAveragedCurves.addComponent(comboErrorBarType, 1, 2, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, 1, 1);
+        panelAveragedCurves.addComponent(boxShowAveragedRecordedCurve, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, 1, 1);
+        panelAveragedCurves.addComponent(boxShowAveragedIndentation, 2, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, 1, 1);
+        panelAveragedCurves.addComponent(boxShowAveragedPointwiseModulus, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, 1, 1);
+       
+        
+        panelAveragedCurves.addComponent(new JLabel("Point count"), 0, 2, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, 1, 1);
+        panelAveragedCurves.addComponent(spinnerAveragedRecordedCurvePointCount, 1, 2, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, 1, 1);
+        panelAveragedCurves.addComponent(spinnerAveragedIndentationPointCount, 2, 2, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, 1, 1);
+        panelAveragedCurves.addComponent(spinnerAveragedPointwiseModulusPointCount, 3, 2, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, 1, 1);
+        
+        panelAveragedCurves.addComponent(new JLabel("Error bars"), 1, 3, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, 1, 1);   
+        panelAveragedCurves.addComponent(comboErrorBarType, 2, 3, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, 1, 1);
         panelAveragedCurves.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Averaged curves"));
 
         SubPanel panelMaps = new SubPanel();

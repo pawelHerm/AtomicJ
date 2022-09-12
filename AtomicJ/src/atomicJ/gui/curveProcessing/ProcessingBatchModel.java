@@ -58,6 +58,7 @@ import atomicJ.gui.AbstractModel;
 import atomicJ.gui.InputNotProvidedException;
 import atomicJ.gui.UserCommunicableException;
 import atomicJ.gui.curveProcessing.SmootherType.BasicSmootherModel;
+import atomicJ.gui.curveProcessing.SpectroscopyCurveAveragingSettings.AveragingSettings;
 import atomicJ.gui.rois.ROI;
 import atomicJ.gui.rois.ROIRelativePosition;
 import atomicJ.gui.rois.ROIUtilities;
@@ -163,7 +164,13 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
 
     static final String SHOW_AVERAGED_RECORDED_CURVES = "ShowAveragedRecordedCurves";
     static final String SHOW_AVERAGED_INDENTATION_CURVES = "ShowAveragedIndentationCurves";
-    static final String SHOW_AVERAGED_POINTWISE_MODULUS_CURVES = "ChowAveragedPointwiseModulusCurves";
+    static final String SHOW_AVERAGED_POINTWISE_MODULUS_CURVES = "ShowAveragedPointwiseModulusCurves";
+    
+    static final String CURVE_AVERAGING_ENABLED = "CurveAveragingEnabled";
+
+    static final String AVERAGED_RECORDED_CURVES_POINT_COUNT = "AveragedRecordedCurvesPointCount";
+    static final String AVERAGED_INDENTATION_CURVES_POINT_COUNT = "AveragedIndentationCurvesPointCount";
+    static final String AVERAGED_POINTWISE_MODULUS_CURVES_POINT_COUNT = "AveragedPointwiseModulusCurvesPointCount";
 
     static final String AVERAGED_CURVES_ERROR_BAR_TYPE = "AveragedCurvesErrorBarType";
 
@@ -250,11 +257,17 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
     private boolean includeCurvesInMaps;
     private boolean plotMapAreaImages;
     private boolean mapAreaImagesAvailable;
+    
+    private boolean curveAveragingEnabled;
 
     private boolean showAveragedRecordedCurves;
     private boolean showAveragedIndentationCurves;
     private boolean showAveragedPointwiseModulusCurves;
 
+    private int averagedRecordedCurvesPointCount;
+    private int averagedIndentationCurvesPointCount;
+    private int averagedPointwiseModulusCurvesPointCount;
+    
     private ErrorBarType averagedCurvesBarType;
 
     private boolean calculateAdhesionForce;
@@ -303,8 +316,7 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
     private final SpectroscopyResultDestination destination;
 
     //jumps
-
-
+    
     private boolean findJumps = false;
     private ForceCurveBranch branchWithJumps = ForceCurveBranch.WITHDRAW;
     private int polynomialDegree = 1;
@@ -343,6 +355,7 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         checkIfContainsForceVolumeData();
         checkIfContainsMapAreaImages();
         checkIfNonEmpty();
+        checkIfAveragingEnabled();
         checkAvailableBranches();
         initializeSensitivitySpecificationSettings();
         initializeSpringConstantSpecificationSettings();
@@ -416,6 +429,10 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         this.showAveragedIndentationCurves = memento.isShowAveragedIndentationCurves();
         this.showAveragedPointwiseModulusCurves = memento.isShowAveragedPointwiseModulusCurves();
 
+        this.averagedRecordedCurvesPointCount = memento.getAveragedRecordedCurvesPointCount();
+        this.averagedIndentationCurvesPointCount = memento.getAveragedIndentationCurvesPointCount();
+        this.averagedPointwiseModulusCurvesPointCount = memento.getAveragedPointwiseModulusCurvesPointCount();
+        
         this.averagedCurvesBarType = memento.getAveragedCurvesBarType();
 
         this.includeCurvesInMaps = memento.isIncludeCurvesInMaps();
@@ -464,6 +481,7 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         checkIfContainsForceVolumeData();
         checkIfContainsMapAreaImages();
         checkIfNonEmpty();
+        checkIfAveragingEnabled();
         checkAvailableBranches();
         initializeSensitivitySpecificationSettings();
         initializeSpringConstantSpecificationSettings();
@@ -746,6 +764,10 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         this.showAveragedIndentationCurves = PREF.getBoolean(SHOW_AVERAGED_INDENTATION_CURVES, true);
         this.showAveragedPointwiseModulusCurves = PREF.getBoolean(SHOW_AVERAGED_POINTWISE_MODULUS_CURVES, true);
 
+        this.averagedRecordedCurvesPointCount = PREF.getInt(AVERAGED_RECORDED_CURVES_POINT_COUNT, 100);
+        this.averagedIndentationCurvesPointCount = PREF.getInt(AVERAGED_INDENTATION_CURVES_POINT_COUNT, 100);
+        this.averagedPointwiseModulusCurvesPointCount = PREF.getInt(AVERAGED_POINTWISE_MODULUS_CURVES_POINT_COUNT, 100);
+     
         String averagedCurvesBarTypeId = PREF.get(AVERAGED_CURVES_ERROR_BAR_TYPE, ErrorBarType.STANDARD_DEVIATION.getIdentifier());
         this.averagedCurvesBarType = ErrorBarType.getValue(averagedCurvesBarTypeId, ErrorBarType.STANDARD_DEVIATION);
 
@@ -861,6 +883,7 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         checkIfContainsForceVolumeData();
         checkIfContainsMapAreaImages();
         checkIfNonEmpty();
+        checkIfAveragingEnabled();
         checkAvailableBranches();
         initializeSensitivitySpecificationSettings();
         initializeSpringConstantSpecificationSettings();
@@ -2042,6 +2065,11 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
             flushPreferences();
         }
     }
+    
+    public boolean isAveragingEnabled()
+    {
+        return curveAveragingEnabled;
+    }
 
     public boolean isShowAveragedRecordedCurves()   
     {
@@ -2062,6 +2090,25 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         }
     }
 
+    public int getAveragedRecordedCurvesPointCount()
+    {
+        return averagedRecordedCurvesPointCount;
+    }
+    
+    public void setAveragedRecordedCurvesPointCount(int averagedRecordedCurvesPointCountNew)   
+    {
+        if(this.averagedRecordedCurvesPointCount != averagedRecordedCurvesPointCountNew)
+        {
+            int averagedRecordedCurvesPointCountOld = this.averagedRecordedCurvesPointCount;
+            this.averagedRecordedCurvesPointCount = averagedRecordedCurvesPointCountNew;
+
+            firePropertyChange(AVERAGED_RECORDED_CURVES_POINT_COUNT, averagedRecordedCurvesPointCountOld, averagedRecordedCurvesPointCountNew);
+            PREF.putInt(AVERAGED_RECORDED_CURVES_POINT_COUNT, averagedRecordedCurvesPointCountNew);
+
+            flushPreferences();
+        }
+    }
+    
     public boolean isShowAveragedIndentationCurves()    
     {
         return showAveragedIndentationCurves;
@@ -2076,6 +2123,25 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
 
             firePropertyChange(SHOW_AVERAGED_INDENTATION_CURVES, showAveragedIndentationCurvesOld, showAveragedIndentationCurvesNew);
             PREF.putBoolean(SHOW_AVERAGED_INDENTATION_CURVES, showAveragedIndentationCurvesNew);
+
+            flushPreferences();
+        }
+    }   
+
+    public int getAveragedIndentationCurvesPointCount()
+    {
+        return averagedIndentationCurvesPointCount;
+    }
+    
+    public void setAveragedIndentationCurvesPointCount(int averagedIndentationCurvesPointCountNew)   
+    {
+        if(this.averagedIndentationCurvesPointCount != averagedIndentationCurvesPointCountNew)
+        {
+            int averagedIndentationCurvesPointCountOld = this.averagedRecordedCurvesPointCount;
+            this.averagedIndentationCurvesPointCount = averagedIndentationCurvesPointCountNew;
+
+            firePropertyChange(AVERAGED_INDENTATION_CURVES_POINT_COUNT, averagedIndentationCurvesPointCountOld, averagedIndentationCurvesPointCountNew);
+            PREF.putInt(AVERAGED_INDENTATION_CURVES_POINT_COUNT, averagedIndentationCurvesPointCountNew);
 
             flushPreferences();
         }
@@ -2099,7 +2165,27 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
             flushPreferences();
         }
     }
+  
 
+    public int getAveragedPointwiseModulusCurvesPointCount()
+    {
+        return averagedPointwiseModulusCurvesPointCount;
+    }
+    
+    public void setAveragedPointwiseModulusCurvesPointCount(int averagedPointwiseModulusCurvesPointCountNew)   
+    {
+        if(this.averagedPointwiseModulusCurvesPointCount != averagedPointwiseModulusCurvesPointCountNew)
+        {
+            int averagedPointwiseModulusCurvesPointCountOld = this.averagedPointwiseModulusCurvesPointCount;
+            this.averagedPointwiseModulusCurvesPointCount = averagedPointwiseModulusCurvesPointCountNew;
+
+            firePropertyChange(AVERAGED_POINTWISE_MODULUS_CURVES_POINT_COUNT, averagedPointwiseModulusCurvesPointCountOld, averagedPointwiseModulusCurvesPointCountNew);
+            PREF.putInt(AVERAGED_POINTWISE_MODULUS_CURVES_POINT_COUNT, averagedPointwiseModulusCurvesPointCountNew);
+
+            flushPreferences();
+        }
+    }
+    
     public ErrorBarType getAveragedCurvesBarType()
     {
         return averagedCurvesBarType;
@@ -2506,7 +2592,11 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
 
     public SpectroscopyCurveAveragingSettings getCurveAveragingSettings()
     {
-        SpectroscopyCurveAveragingSettings averagedCurves = new SpectroscopyCurveAveragingSettings(showAveragedRecordedCurves, showAveragedIndentationCurves, showAveragedPointwiseModulusCurves, averagedCurvesBarType);
+        AveragingSettings recordedCurveSettings = new AveragingSettings(averagedRecordedCurvesPointCount, averagedCurvesBarType, showAveragedRecordedCurves);
+        AveragingSettings indentationCurveSettings = new AveragingSettings(averagedIndentationCurvesPointCount, averagedCurvesBarType, showAveragedIndentationCurves);
+        AveragingSettings pointwiseModulusCurveSettings = new AveragingSettings(averagedPointwiseModulusCurvesPointCount, averagedCurvesBarType, showAveragedPointwiseModulusCurves);
+
+        SpectroscopyCurveAveragingSettings averagedCurves = new SpectroscopyCurveAveragingSettings(curveAveragingEnabled, recordedCurveSettings, indentationCurveSettings, pointwiseModulusCurveSettings);
         return averagedCurves;
     }
 
@@ -3044,6 +3134,14 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         }
     }
 
+    private void checkIfAveragingEnabled()
+    {
+        boolean curveAveragingEnabledOld = this.curveAveragingEnabled;
+        this.curveAveragingEnabled = sources.size() > 1;
+        
+        firePropertyChange(CURVE_AVERAGING_ENABLED, curveAveragingEnabledOld, this.curveAveragingEnabled);           
+    }
+
     private void checkIfContainsForceVolumeData()
     {
         boolean containsForceVolumeDataNew = findIfContainsForceVolumeData(); 
@@ -3259,6 +3357,10 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         properties.setProperty(SHOW_AVERAGED_INDENTATION_CURVES, Boolean.toString(showAveragedIndentationCurves));
         properties.setProperty(SHOW_AVERAGED_POINTWISE_MODULUS_CURVES, Boolean.toString(showAveragedPointwiseModulusCurves));
 
+        properties.setProperty(AVERAGED_RECORDED_CURVES_POINT_COUNT, Integer.toString(averagedRecordedCurvesPointCount));
+        properties.setProperty(AVERAGED_INDENTATION_CURVES_POINT_COUNT, Integer.toString(averagedIndentationCurvesPointCount));
+        properties.setProperty(AVERAGED_POINTWISE_MODULUS_CURVES_POINT_COUNT, Integer.toString(averagedPointwiseModulusCurvesPointCount));
+        
         properties.setProperty(AVERAGED_CURVES_ERROR_BAR_TYPE, this.averagedCurvesBarType.getIdentifier());
 
         properties.setProperty(CALCULATE_R_SQUARED, Boolean.toString(calculateRSquared));
@@ -3405,6 +3507,16 @@ public class ProcessingBatchModel extends AbstractModel implements BasicSmoother
         boolean showAveragedPointwiseModulusCurves = FileInputUtilities.parseSafelyBoolean(properties.getProperty(SHOW_AVERAGED_POINTWISE_MODULUS_CURVES), this.showAveragedPointwiseModulusCurves);
         setShowAveragedPointwiseModulusCurves(showAveragedPointwiseModulusCurves);
 
+        int averagedRecordedCurvesPointCount = FileInputUtilities.parseSafelyInt(properties.getProperty(AVERAGED_RECORDED_CURVES_POINT_COUNT), this.averagedRecordedCurvesPointCount);
+        setAveragedRecordedCurvesPointCount(averagedRecordedCurvesPointCount);
+
+        int averagedIndentationCurvesPointCount = FileInputUtilities.parseSafelyInt(properties.getProperty(AVERAGED_INDENTATION_CURVES_POINT_COUNT), this.averagedIndentationCurvesPointCount);
+        setAveragedIndentationCurvesPointCount(averagedIndentationCurvesPointCount);
+
+        int averagedPointwiseModulusCurvesPointCount = FileInputUtilities.parseSafelyInt(properties.getProperty(AVERAGED_POINTWISE_MODULUS_CURVES_POINT_COUNT), this.averagedPointwiseModulusCurvesPointCount);
+        setAveragedPointwiseModulusCurvesPointCount(averagedPointwiseModulusCurvesPointCount);
+
+        
         ErrorBarType averagedCurvesBarType = ErrorBarType.getValue(properties.getProperty(AVERAGED_CURVES_ERROR_BAR_TYPE), this.averagedCurvesBarType);
         setAveragedCurvesBarType(averagedCurvesBarType);
 

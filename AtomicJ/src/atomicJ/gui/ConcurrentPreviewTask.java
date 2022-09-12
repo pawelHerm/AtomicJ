@@ -66,7 +66,7 @@ public class ConcurrentPreviewTask extends MonitoredSwingWorker<Void, Void>
 
     @Override
     public Void doInBackground() throws UserCommunicableException
-    {	
+    {	        
         int taskNumber = Math.min(Math.max(problemSize/20, 1), MAX_TASK_NUMBER);
         int basicTaskSize = problemSize/taskNumber;
         int remainingFiles = problemSize%taskNumber;
@@ -80,7 +80,7 @@ public class ConcurrentPreviewTask extends MonitoredSwingWorker<Void, Void>
         for( int i = 0; i <taskNumber; i++ ) 
         {
             int currentTaskSize = basicTaskSize;
-            if(i<remainingFiles)
+            if(i < remainingFiles)
             {
                 currentTaskSize++;
             }
@@ -104,7 +104,7 @@ public class ConcurrentPreviewTask extends MonitoredSwingWorker<Void, Void>
             }
 
             for(Subtask subtask: tasks)
-            {
+            {                
                 curveChartMap.putAll(subtask.getCurveCharts());
                 imageChartMap.putAll(subtask.getImageCharts());
             }
@@ -209,7 +209,7 @@ public class ConcurrentPreviewTask extends MonitoredSwingWorker<Void, Void>
     {
         super.done();
         try 
-        {
+        {            
             boolean cancelled = isCancelled();
 
             if(cancelled)

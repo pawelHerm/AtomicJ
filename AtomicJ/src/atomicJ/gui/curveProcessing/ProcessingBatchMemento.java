@@ -90,6 +90,10 @@ public class ProcessingBatchMemento extends AbstractModel
     private final boolean showAveragedIndentationCurves;
     private final boolean showAveragedPointwiseModulusCurves;
 
+    private final int averagedRecordedCurvesPointCount;
+    private final int averagedIndentationCurvesPointCount;
+    private final int averagedPointwiseModulusCurvesPointCount;
+    
     private final ErrorBarType averagedCurvesBarType;
 
     private final boolean contactPointAutomatic;
@@ -169,6 +173,10 @@ public class ProcessingBatchMemento extends AbstractModel
         this.showAveragedRecordedCurves = model.isShowAveragedRecordedCurves();
         this.showAveragedIndentationCurves = model.isShowAveragedIndentationCurves();
         this.showAveragedPointwiseModulusCurves = model.isShowAveragedPointwiseModulusCurves();
+        
+        this.averagedRecordedCurvesPointCount = model.getAveragedRecordedCurvesPointCount();
+        this.averagedIndentationCurvesPointCount = model.getAveragedIndentationCurvesPointCount();
+        this.averagedPointwiseModulusCurvesPointCount = model.getAveragedPointwiseModulusCurvesPointCount();
 
         this.averagedCurvesBarType= model.getAveragedCurvesBarType();
 
@@ -510,6 +518,23 @@ public class ProcessingBatchMemento extends AbstractModel
     {
         return showAveragedPointwiseModulusCurves;
     }
+    
+    
+    public int getAveragedRecordedCurvesPointCount()
+    {
+        return averagedRecordedCurvesPointCount;
+    }
+    
+    public int getAveragedIndentationCurvesPointCount()
+    {
+        return averagedIndentationCurvesPointCount;
+    }
+    
+    public int getAveragedPointwiseModulusCurvesPointCount()
+    {
+        return averagedPointwiseModulusCurvesPointCount;
+    }
+    
 
     public ErrorBarType getAveragedCurvesBarType()
     {

@@ -462,7 +462,7 @@ public class ProcessingModel extends AbstractModel implements CroppingReceiver, 
 
         setSources(sourcesNew);
 
-        for(int i = 1; i<n; i++)
+        for(int i = 1; i < n; i++)
         {
             List<SimpleSpectroscopySource> batchSources = new ArrayList<>();
 
@@ -1040,6 +1040,11 @@ public class ProcessingModel extends AbstractModel implements CroppingReceiver, 
         currentBatch.setPlotModulusFit(plotModulusFitNew);
     }
 
+    public boolean isAveragingEnabled()
+    {
+        return currentBatch.isAveragingEnabled();
+    }
+    
     public boolean isShowAveragedRecordedCurves()   
     {
         return currentBatch.isShowAveragedRecordedCurves();
@@ -1050,6 +1055,16 @@ public class ProcessingModel extends AbstractModel implements CroppingReceiver, 
         currentBatch.setShowAveragedRecordedCurves(showAveragedRecordedCurvesNew);
     }
 
+    public int getAveragedRecordedCurvesPointCount()
+    {
+        return currentBatch.getAveragedRecordedCurvesPointCount();
+    }
+    
+    public void setAveragedRecordedCurvesPointCount(int averagedRecordedCurvesPointCountNew)   
+    {
+        currentBatch.setAveragedRecordedCurvesPointCount(averagedRecordedCurvesPointCountNew);
+    }
+        
     public boolean isShowAveragedIndentationCurves()    
     {
         return currentBatch.isShowAveragedIndentationCurves();
@@ -1058,6 +1073,16 @@ public class ProcessingModel extends AbstractModel implements CroppingReceiver, 
     public void setShowAveragedIndentationCurves(boolean showAveragedIndentationCurvesNew)    
     {
         currentBatch.setShowAveragedIndentationCurves(showAveragedIndentationCurvesNew);
+    }
+    
+    public int getAveragedIndentationCurvesPointCount()
+    {
+        return currentBatch.getAveragedIndentationCurvesPointCount();
+    }
+    
+    public void setAveragedIndentationCurvesPointCount(int averagedIndentationCurvesPointCountNew)   
+    {
+        currentBatch.setAveragedIndentationCurvesPointCount(averagedIndentationCurvesPointCountNew);
     }
 
     public boolean isShowAveragedPointwiseModulusCurves()
@@ -1070,6 +1095,16 @@ public class ProcessingModel extends AbstractModel implements CroppingReceiver, 
         currentBatch.setShowAveragedPointwiseModulusCurves(showAveragedPointwiseModulusCurvesNew);
     }
 
+    public int getAveragedPointwiseModulusCurvesPointCount()
+    {
+        return currentBatch.getAveragedPointwiseModulusCurvesPointCount();
+    }
+    
+    public void setAveragedPointwiseModulusCurvesPointCount(int averagedPointwiseModulusCurvesPointCountNew)   
+    {
+        currentBatch.setAveragedPointwiseModulusCurvesPointCount(averagedPointwiseModulusCurvesPointCountNew);
+    }
+    
     public ErrorBarType getAveragedCurvesBarType()
     {
         return currentBatch.getAveragedCurvesBarType();

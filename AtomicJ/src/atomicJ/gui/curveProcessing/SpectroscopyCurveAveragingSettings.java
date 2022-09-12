@@ -1,60 +1,72 @@
 package atomicJ.gui.curveProcessing;
 
 import atomicJ.curveProcessing.ErrorBarType;
-import atomicJ.utilities.Validation;
 
 public class SpectroscopyCurveAveragingSettings 
 {
-    private final int POINT_COUNT = 30;
+    public static final int DEFAULT_POINT_COUNT = 30;
+    
+    private boolean averagingEnabled;
 
-    private final boolean showAveragedRecordedCurves;
-    private final boolean showAveragedIndentationCurves;
-    private final boolean showAveragedPointwiseModulusCurves;
-
-    private final ErrorBarType averagedCurvesBarType;
+    private final AveragingSettings recordedCurvesAveragingSettings;
+    private final AveragingSettings indentationCurvesAveragingSettings;
+    private final AveragingSettings pointwiseModulusCurvesAveragingSettings;
 
     //immutable class
-    public SpectroscopyCurveAveragingSettings(boolean showAveragedRecordedCurves, boolean showAveragedIndentationCurves, boolean showAveragedPointwiseModulusCurves, ErrorBarType averagedCurvesBarType)
+    public SpectroscopyCurveAveragingSettings(boolean averagingEnabled, AveragingSettings recordedCurvesAveragingSettings, AveragingSettings indentationCurvesAveragingSettings, AveragingSettings pointwiseModulusCurvesAveragingSettings)
     {
-        this.showAveragedRecordedCurves = showAveragedRecordedCurves;
-        this.showAveragedIndentationCurves = showAveragedIndentationCurves;
-        this.showAveragedPointwiseModulusCurves = showAveragedPointwiseModulusCurves;
-
-        this.averagedCurvesBarType = Validation.requireNonNullParameterName(averagedCurvesBarType, "averagedCurvesBarType");
+        this.averagingEnabled = averagingEnabled;
+        this.recordedCurvesAveragingSettings = recordedCurvesAveragingSettings;
+        this.indentationCurvesAveragingSettings = indentationCurvesAveragingSettings;
+        this.pointwiseModulusCurvesAveragingSettings = pointwiseModulusCurvesAveragingSettings;
     }
 
-    public int getNoOfPointInAveragedRecordedCurve()
+    public boolean isAveragingEnabled()
     {
-        return POINT_COUNT;
+        return averagingEnabled;
+    }
+    
+    public AveragingSettings getRecordedCurveSettings()
+    {
+        return recordedCurvesAveragingSettings;
     }
 
-    public boolean isShowAveragedRecordedCurves()
+    public AveragingSettings getIndentationSettings()
     {
-        return showAveragedRecordedCurves;
+        return indentationCurvesAveragingSettings;
     }
 
-    public int getNoOfPointInAveragedIndentationCurve()
+    public AveragingSettings getPointwiseModulusSettings()
     {
-        return POINT_COUNT;
+        return pointwiseModulusCurvesAveragingSettings;
     }
 
-    public boolean isShowAveragedIndentationCurves()
+    public static class AveragingSettings
     {
-        return showAveragedIndentationCurves;
-    }
+        private final int pointCount;
+        private final ErrorBarType barType;
+        private final boolean show;
 
-    public int getNoOfPointInAveragedPointwiseModulusCurve()
-    {
-        return POINT_COUNT;
-    }    
+        public AveragingSettings(int pointCount, ErrorBarType barType, boolean show)
+        {
+            this.pointCount = pointCount;
+            this.barType = barType;
+            this.show = show;
+        }
 
-    public boolean isShowAveragedPointwiseModulusCurves()
-    {
-        return showAveragedPointwiseModulusCurves;
-    }
+        public int getPointCount()
+        {
+            return pointCount;
+        }
 
-    public ErrorBarType getAveragedCurvesBarType()
-    {
-        return averagedCurvesBarType;
+        public ErrorBarType getErrorBarType()
+        {
+            return barType;
+        }
+
+        public boolean isShown()
+        {
+            return show;
+        }
     }
 }

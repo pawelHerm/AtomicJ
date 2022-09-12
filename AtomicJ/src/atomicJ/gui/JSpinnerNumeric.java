@@ -36,7 +36,7 @@ public class JSpinnerNumeric extends JSpinner implements Accessible
     {
         if(!(model instanceof SpinnerDoubleModel))
         {
-            throw new IllegalArgumentException("The 'model ' parameter must be an instance of the SpinnerDoubleModel class");
+            throw new IllegalArgumentException("The 'model' parameter must be an instance of the SpinnerDoubleModel class");
         }
         super.setModel(model);
     }
@@ -46,7 +46,7 @@ public class JSpinnerNumeric extends JSpinner implements Accessible
     {
         if(!(model instanceof SpinnerDoubleModel))
         {
-            throw new IllegalArgumentException("The 'model ' parameter must be an instance of the SpinnerDoubleModel class");
+            throw new IllegalArgumentException("The 'model' parameter must be an instance of the SpinnerDoubleModel class");
         }
         return new NumericSpinnerEditor(this);
     }
@@ -56,7 +56,7 @@ public class JSpinnerNumeric extends JSpinner implements Accessible
     {
         Validation.requireNonNullParameterName(editor, "editor");
 
-        if (!Objects.equal(this.getEditor(), editor))
+        if(!Objects.equal(this.getEditor(), editor))
         {
             JComponent oldEditor = this.getEditor();
             if (oldEditor instanceof NumericSpinnerEditor) {

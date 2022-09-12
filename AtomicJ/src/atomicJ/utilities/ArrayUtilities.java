@@ -1024,6 +1024,21 @@ public class ArrayUtilities
         return flattened;
     }
 
+    public static double[][] combineTo2DArray(double[] xValues, double[] yValues)
+    {
+        Validation.requireTwoArraysNonNullAndOfEqualLengthParameterName(xValues, yValues, "xValues", "yValues");
+
+        int n = xValues.length;
+
+        double[][] points = new double[n][];
+        for(int i = 0; i < n; i++)
+        {
+            points[i] = new double[] {xValues[i], yValues[i]};
+        }
+
+        return points;
+    }
+    
     public static double[] getDoubleArray(Collection<Double> collection)
     {        
         int n = collection.size();

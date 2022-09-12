@@ -30,6 +30,7 @@ import atomicJ.gui.PreferredScaleBarStyle;
 import atomicJ.gui.RendererFactory;
 import atomicJ.gui.StandardStyleTag;
 import atomicJ.gui.StyleTag;
+import atomicJ.gui.curveProcessing.SpectroscopyCurveAveragingSettings.AveragingSettings;
 import atomicJ.gui.Channel1DChart;
 import atomicJ.gui.Channel1DDataset;
 import atomicJ.gui.Channel1DResultsView;
@@ -75,17 +76,22 @@ public class SpectroscopyCurveAveragingHandler implements CurveAveragingHandler<
             IdentityTag tag = entry.getKey();
             SpectroscopyCurveAveragingSettings settings = entry.getValue();
 
+            if(!settings.isAveragingEnabled())
+            {
+                continue;
+            }
+            
             Batch<ProcessedSpectroscopyPack> batch = curves.get(tag);
             List<ProcessedSpectroscopyPack> packs = batch.getPacks();
+            
             if(packs.isEmpty())
             {
-                break;
+                continue;
             }
 
-
-            Channel1DCollection recordedCurveAveraged = getAveragedRecordedCurve(packs, settings);
-            Channel1DCollection forceIndentationAveraged = getAveragedIndentationCurve(packs, settings);
-            Channel1DCollection pointwiseModulusAveraged = getAveragedPointwiseModulusCurve(packs, settings);
+            Channel1DCollection recordedCurveAveraged = getAveragedRecordedCurve(packs, settings.getRecordedCurveSettings());
+            Channel1DCollection forceIndentationAveraged = getAveragedIndentationCurve(packs, settings.getIndentationSettings());
+            Channel1DCollection pointwiseModulusAveraged = getAveragedPointwiseModulusCurve(packs, settings.getPointwiseModulusSettings());
 
             File defaultOutputFile = Processed1DPack.getDefaultOutputFile(packs);
             String name = "Average "+ tag.getLabel();
@@ -100,12 +106,15 @@ public class SpectroscopyCurveAveragingHandler implements CurveAveragingHandler<
             resourceChartMap.put(resource, chartsForResource);
         }
 
-        int previousCount = graphsView.getResourceCount();    
+        if(!resourceChartMap.isEmpty())
+        {
+            int previousCount = graphsView.getResourceCount();    
 
-        graphsView.addResources(resourceChartMap);
-        graphsView.selectResource(previousCount);
+            graphsView.addResources(resourceChartMap);
+            graphsView.selectResource(previousCount);
 
-        graphsView.drawingChartsFinished();
+            graphsView.drawingChartsFinished();
+        }
     }
 
     private Channel1DChart<?> getForceCurveChart(SpectroscopyProcessedResource resource, Channel1DCollection recordedCurveAveraged)
@@ -170,14 +179,14 @@ public class SpectroscopyCurveAveragingHandler implements CurveAveragingHandler<
         return layers;
     }
 
-    private Channel1DCollection getAveragedRecordedCurve(List<ProcessedSpectroscopyPack> packs, SpectroscopyCurveAveragingSettings settings)
+    private Channel1DCollection getAveragedRecordedCurve(List<ProcessedSpectroscopyPack> packs, AveragingSettings settings)
     {
         String name = SpectroscopyAveragedProcessedResource.AVERAGED_RECORDED_CURVE;
-        boolean showAveragedRecordedCurves = settings.isShowAveragedRecordedCurves();
+        boolean showAveragedRecordedCurves = settings.isShown();
         if(showAveragedRecordedCurves)
         {
-            int noOfPoints = settings.getNoOfPointInAveragedRecordedCurve();
-            ErrorBarType errorBarType = settings.getAveragedCurvesBarType();
+            int noOfPoints = settings.getPointCount();
+            ErrorBarType errorBarType = settings.getErrorBarType();
 
             List<Channel1DData> approachChannelDataAll = new ArrayList<>();
             List<Channel1DData> withdrawChannelDataAll = new ArrayList<>();
@@ -208,15 +217,15 @@ public class SpectroscopyCurveAveragingHandler implements CurveAveragingHandler<
         return emptyInstance;
     }
 
-    private Channel1DCollection getAveragedIndentationCurve(List<ProcessedSpectroscopyPack> packs, SpectroscopyCurveAveragingSettings settings)
+    private Channel1DCollection getAveragedIndentationCurve(List<ProcessedSpectroscopyPack> packs, AveragingSettings settings)
     {
         String name = SpectroscopyAveragedProcessedResource.AVERAGED_INDENTATION;
 
-        boolean showAveragedIndentationCuvres = settings.isShowAveragedIndentationCurves();
-        if(showAveragedIndentationCuvres)
+        boolean showAveragedIndentationCurves = settings.isShown();
+        if(showAveragedIndentationCurves)
         {
-            int noOfPoints = settings.getNoOfPointInAveragedIndentationCurve();
-            ErrorBarType errorBarType = settings.getAveragedCurvesBarType();
+            int noOfPoints = settings.getPointCount();
+            ErrorBarType errorBarType = settings.getErrorBarType();
 
             List<Channel1DData> forceIndentationAll = new ArrayList<>();
 
@@ -240,15 +249,15 @@ public class SpectroscopyCurveAveragingHandler implements CurveAveragingHandler<
         return emptyInstance;
     }
 
-    private Channel1DCollection getAveragedPointwiseModulusCurve(List<ProcessedSpectroscopyPack> packs, SpectroscopyCurveAveragingSettings settings)
+    private Channel1DCollection getAveragedPointwiseModulusCurve(List<ProcessedSpectroscopyPack> packs, AveragingSettings settings)
     {
         String name = SpectroscopyAveragedProcessedResource.AVERAGED_POINTWISE_MODULUS;
 
-        boolean showAveragedPointwiseModulusCuvres = settings.isShowAveragedPointwiseModulusCurves();
-        if(showAveragedPointwiseModulusCuvres)
+        boolean showAveragedPointwiseModulusCurves = settings.isShown();
+        if(showAveragedPointwiseModulusCurves)
         {
-            int noOfPoints = settings.getNoOfPointInAveragedPointwiseModulusCurve();
-            ErrorBarType errorBarType = settings.getAveragedCurvesBarType();
+            int noOfPoints = settings.getPointCount();
+            ErrorBarType errorBarType = settings.getErrorBarType();
 
             List<Channel1DData> pointwiseModulusAll = new ArrayList<>();
 
@@ -274,6 +283,6 @@ public class SpectroscopyCurveAveragingHandler implements CurveAveragingHandler<
 
     public void registerAveragingSettings(IdentityTag batchIdentityTag, SpectroscopyCurveAveragingSettings averagingSettings)
     {
-        allAveragingSettings.put(batchIdentityTag,averagingSettings);
+        allAveragingSettings.put(batchIdentityTag, averagingSettings);
     }
 }
