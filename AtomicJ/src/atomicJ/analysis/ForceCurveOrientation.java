@@ -5,6 +5,7 @@ import java.util.Arrays;
 import atomicJ.data.Channel1DData;
 import atomicJ.data.FlexibleFlatChannel1DData;
 import atomicJ.data.units.Quantity;
+import atomicJ.utilities.ArrayUtilities;
 
 
 public enum ForceCurveOrientation 
@@ -166,50 +167,13 @@ public enum ForceCurveOrientation
         return orientation;
     }
 
-    //operation performed in place
-    public static void negateXs(double[][] data)
-    {
-        int n = data.length;
-
-        for(int i = 0; i<n; i++)
-        {
-            double[] p = data[i];
-            double x = p[0];
-            p[0] = -x;
-        }
-    }
-
-    //operation performed in place
-    public static void negate(double[] data)
-    {
-        int n = data.length;
-
-        for(int i = 0; i<n; i++)
-        {
-            double x = data[i];
-            data[i] = -x;
-        }
-    }
-
-    public static void negateAndShiftXs(double[][] data, double shift)
-    {
-        int n = data.length;
-
-        for(int i = 0; i<n; i++)
-        {
-            double[] p = data[i];
-            double x = p[0];
-            p[0] = -x + shift;
-        }
-    }
-
     public double[][] correctOrientation(double[][] sortedBranch)
     {
         ForceCurveOrientation originalOrientation = resolveOrientation(sortedBranch);
 
         if(!this.equals(originalOrientation))
         {
-            negateXs(sortedBranch);
+            ArrayUtilities.negateXs(sortedBranch);
         }
 
         return sortedBranch;
@@ -221,7 +185,7 @@ public enum ForceCurveOrientation
 
         if(!this.equals(originalOrientation))
         {
-            negate(sortedBranchXs);
+            ArrayUtilities.negate(sortedBranchXs);
         }
     }
 

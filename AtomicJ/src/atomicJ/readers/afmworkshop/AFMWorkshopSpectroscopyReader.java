@@ -29,6 +29,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import atomicJ.analysis.ForceCurveOrientation;
 import atomicJ.analysis.PhotodiodeSignalType;
 import atomicJ.analysis.SortedArrayOrder;
 import atomicJ.data.Channel1DData;
@@ -59,7 +60,7 @@ public class AFMWorkshopSpectroscopyReader extends AbstractSourceReader<SimpleSp
     private static final String DELIMITER = "((?:\\p{javaWhitespace}*)[,\\n]+(?:\\p{javaWhitespace}*))";
 
     private static final String FORCE_CURVE_FIELD = "Force-Distance Curve";
-    private static final String DATE_AND_TIME_FIELD_KEY = "Date and Time";
+    private static final String FILE_FORMAT_FIELD = "File Format";
 
     @Override
     public List<SimpleSpectroscopySource> readSources(File f, atomicJ.readers.SourceReadingDirectives readingDirective) throws UserCommunicableException, IllegalImageException 
@@ -73,11 +74,29 @@ public class AFMWorkshopSpectroscopyReader extends AbstractSourceReader<SimpleSp
             String firstNonEmptyLine = getNextNonEmptyLine(scanner);         
 
             boolean isSpectroscopy = FORCE_CURVE_FIELD.equals(firstNonEmptyLine);
-            String dateAndTimeFiled = scanner.nextLine();
+            String secondNonEmptyLine = getNextNonEmptyLine(scanner);
 
+            if(secondNonEmptyLine.startsWith(FILE_FORMAT_FIELD))
+            {
+                String[] fileFormatWords = secondNonEmptyLine.split(":");
+                
+                if(fileFormatWords.length > 0)
+                {
+                 //   Integer.parseInt(fileFormatWords[fileFormatWords.length - 1].trim())                                        
+                    //we skip header text header                    
+                    String line = getNextNonEmptyLine(scanner);
+                    
+                    while(!line.isEmpty()) //we don't check if it hasNext(). If it does not, then end of file exception will be thrown, which is the expected behaviour for us
+                    {
+                        line = scanner.nextLine();                     
+                    }
+                }
+            }
+            
             scanner.useDelimiter(DELIMITER);     
 
             String columnHeadersLine = getNextNonEmptyLine(scanner);
+                        
             String[] headers = columnHeadersLine.split(DELIMITER);
 
             MetaMap<AFMWorkshopCurveBranch, AFMWorkshopSignalType, DataColumn> dataColumns = new MetaMap<>();
@@ -87,7 +106,7 @@ public class AFMWorkshopSpectroscopyReader extends AbstractSourceReader<SimpleSp
             for(int i = 0; i<headers.length;i++)
             {
                 DataColumn dataColumn = buildDataColumn(headers[i], i);
-                dataColumns.put(dataColumn.getCurveBranch(),dataColumn.getSignalType(), dataColumn);
+                dataColumns.put(dataColumn.getCurveBranch(), dataColumn.getSignalType(), dataColumn);
             }
 
             List<double[]> data = new ArrayList<>();
@@ -123,12 +142,34 @@ public class AFMWorkshopSpectroscopyReader extends AbstractSourceReader<SimpleSp
 
             Quantity defaultXQuantity = Quantities.DISTANCE_MICRONS;
             Quantity defaultYQuantity = CalibrationState.getDefaultYQuantity(nonNullColumn.getUnit());
-
+            
+            
             Channel1DData approachChannelData = approachSpecified ? buildChannelData(approachXColumn, approachYColumn, data, SortedArrayOrder.DESCENDING) : FlexibleChannel1DData.getEmptyInstance(defaultXQuantity, defaultYQuantity);
             Channel1DData withdrawChannelData = withdrawSpecified ? buildChannelData(withdrawXColumn, withdrawYColumn, data, SortedArrayOrder.ASCENDING) : FlexibleChannel1DData.getEmptyInstance(defaultXQuantity, defaultYQuantity);
 
-            StandardSimpleSpectroscopySource source = buildSource(f, "", approachChannelData, withdrawChannelData);
+            ForceCurveOrientation orientation = ForceCurveOrientation.resolveOrientation(approachChannelData.getPoints());
+            
+            boolean orientationOk = ForceCurveOrientation.LEFT.equals(orientation);
+            
+            StandardSimpleSpectroscopySource source;
+            
+            if(orientationOk)
+            {
+                source = buildSource(f, "", approachChannelData, withdrawChannelData);
+            }
+            else
+            {
+                double[][] approachPoints = approachChannelData.getPoints();
+                double[][] withdrawPoints = withdrawChannelData.getPoints();
+                ArrayUtilities.negateXs(approachPoints);//operation in place, changes sorted order
+                ArrayUtilities.negateXs(withdrawPoints);//operation in place, changes sorted order
 
+                Channel1DData approachChannelDataCorrectedOrientation = new FlexibleChannel1DData(approachPoints, approachChannelData.getXQuantity(), approachChannelData.getYQuantity(), SortedArrayOrder.ASCENDING);
+                Channel1DData withdrawChannelDataCorrectedOrientation = new FlexibleChannel1DData(withdrawPoints, withdrawChannelData.getXQuantity(), withdrawChannelData.getYQuantity(), SortedArrayOrder.DESCENDING);
+               
+                source = buildSource(f, "", approachChannelDataCorrectedOrientation, withdrawChannelDataCorrectedOrientation);
+            }
+            
             PhotodiodeSignalType photodiodeSignalType = PhotodiodeSignalType.getSignalType(nonNullColumn.getUnit(), PhotodiodeSignalType.VOLTAGE);
             source.setPhotodiodeSignalType(photodiodeSignalType);
 
@@ -144,7 +185,7 @@ public class AFMWorkshopSpectroscopyReader extends AbstractSourceReader<SimpleSp
         }  
     }   
 
-    private static Channel1DData buildChannelData(DataColumn xColumn, DataColumn yColumn, List<double[]> values, SortedArrayOrder sortedArrayOrder)
+    private static Channel1DData buildChannelData(DataColumn xColumn, DataColumn yColumn, List<double[]> values, SortedArrayOrder requestedXOrder)
     {
         Quantity xQuantity = Quantities.DISTANCE_MICRONS;           
         Quantity yQuantity = CalibrationState.getDefaultYQuantity(yColumn.getUnit());
@@ -152,9 +193,10 @@ public class AFMWorkshopSpectroscopyReader extends AbstractSourceReader<SimpleSp
         double factorX = xColumn.getUnit().getConversionFactorTo(xQuantity.getUnit());
         double factorY = yColumn.getUnit().getConversionFactorTo(yQuantity.getUnit());
 
-        double[][] data = ArrayUtilities.trimIsolatedEndPoints(ArrayUtilities.trimXRepetitionsIfNecessary(combineValueLists(values, xColumn.getIndex(), yColumn.getIndex(), factorX, factorY, sortedArrayOrder),0), 3, 10);
-
-        Channel1DData channelData = new FlexibleChannel1DData(data, xQuantity, yQuantity, sortedArrayOrder);
+        double[][] rawData = combineValueLists(values, xColumn.getIndex(), yColumn.getIndex(), factorX, factorY, requestedXOrder);
+        double[][] data = ArrayUtilities.trimIsolatedEndPoints(ArrayUtilities.trimXRepetitionsIfNecessary(rawData,0), 3, 10);
+                        
+        Channel1DData channelData = new FlexibleChannel1DData(data, xQuantity, yQuantity, requestedXOrder);
 
         return channelData;
     }
@@ -165,8 +207,8 @@ public class AFMWorkshopSpectroscopyReader extends AbstractSourceReader<SimpleSp
 
         double[][] points = new double[n][]; 
 
-        SortedArrayOrder currentOrder = SortedArrayOrder.getOverallXOrder(values);
-
+        SortedArrayOrder currentOrder = SortedArrayOrder.getOverallXOrder(values, xIndex);
+        
         if(Objects.equals(currentOrder, requestedXOrder))
         {
             for(int i = 0; i<n; i++)

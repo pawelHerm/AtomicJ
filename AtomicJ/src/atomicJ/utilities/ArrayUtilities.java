@@ -99,6 +99,43 @@ public class ArrayUtilities
         return null;
     }
 
+    //operation performed in place
+    public static void negateXs(double[][] data)
+    {
+        int n = data.length;
+    
+        for(int i = 0; i<n; i++)
+        {
+            double[] p = data[i];
+            double x = p[0];
+            p[0] = -x;
+        }
+    }
+
+    //operation performed in place
+    public static void negate(double[] data)
+    {
+        int n = data.length;
+    
+        for(int i = 0; i<n; i++)
+        {
+            double x = data[i];
+            data[i] = -x;
+        }
+    }
+
+    public static void negateAndShiftXs(double[][] data, double shift)
+    {
+        int n = data.length;
+    
+        for(int i = 0; i<n; i++)
+        {
+            double[] p = data[i];
+            double x = p[0];
+            p[0] = -x + shift;
+        }
+    }
+
     public static boolean containsAtLeastNNonZero(double[] array, int n, double tolerance)
     {
         int count = 0;
@@ -161,7 +198,7 @@ public class ArrayUtilities
     //if the array's length is smaller than k + 3, the method returns original array
     public static double[][] trimIsolatedEndPoints(double[][] points, int k, double ratioTolerance)
     {
-        if(points == null || points.length < (k + 1 + 2))
+        if(points == null || points.length < (k + 3))
         {
             return points;
         }

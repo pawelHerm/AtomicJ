@@ -123,12 +123,18 @@ public enum SortedArrayOrder
 
     public static SortedArrayOrder getOverallXOrder(List<double[]> sortedPoints)
     {
-        boolean xDescending = isXOverallDescending(sortedPoints);
+        return getOverallXOrder(sortedPoints, 0);
+    }
+
+
+    public static  SortedArrayOrder getOverallXOrder(List<double[]> sortedPoints, int xIndex)
+    {
+        boolean xDescending = isXOverallDescending(sortedPoints, xIndex);
         SortedArrayOrder order = xDescending ? DESCENDING : ASCENDING;
 
         return order;
     }
-
+    
     private static boolean isXOverallDescending(double[][] points)
     {
         int n = points.length;
@@ -143,7 +149,7 @@ public enum SortedArrayOrder
         return descending;
     }
 
-    private static boolean isXOverallDescending(List<double[]> points)
+    private static boolean isXOverallDescending(List<double[]> points, int xIndex)
     {
         int n = points.size();
 
@@ -152,11 +158,12 @@ public enum SortedArrayOrder
             return true;
         }
 
-        boolean descending = points.get(0)[0] > points.get(n - 1)[0];
+        boolean descending = points.get(0)[xIndex] > points.get(n - 1)[xIndex];
 
         return descending;
     }
-
+    
+    
     private static boolean isInitiallyDescending(double[] values)
     {
         int n = values.length;

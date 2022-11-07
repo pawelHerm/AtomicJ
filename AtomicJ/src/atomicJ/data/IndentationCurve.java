@@ -56,8 +56,8 @@ public class IndentationCurve implements Data1D
     {
         List<Channel1D> channels = new ArrayList<>();
         channels.add(indentation);
-
-        if(fit != null)
+        
+        if(this.fit != null)
         {
             channels.add(fit);
         }
