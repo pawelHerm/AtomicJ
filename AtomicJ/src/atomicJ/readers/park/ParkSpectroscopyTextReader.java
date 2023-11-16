@@ -243,7 +243,7 @@ public class ParkSpectroscopyTextReader extends AbstractSourceReader<SimpleSpect
                     yUnitLine = line;
                 }             
             }
-
+    
             String xUnitString = xUnitLine.split(":")[1];
             String yUnitString = yUnitLine.split(":")[1];
 

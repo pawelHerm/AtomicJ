@@ -7,11 +7,11 @@ import atomicJ.utilities.MathUtilities;
 
 public enum SIPrefix implements Comparable<SIPrefix>
 {        
-    f("f",-15), p("p",-12), n("n",-9), u("μ", new String[] {"\uFFFD","u","μ","\u00B5","~","Micro"}, -6), m("m",-3), c("c", -2), d("d", -1),Empty("", 0),
-    da("da", 1), h("h", 2), k("k",3), M("M",6), G("G",9), T("T", 12);
+    f("f",new String[] {"f","Femto","femto"},-15), p("p",new String[] {"p","Pico","pico"},-12), n("n",new String[] {"n","Nano","nano"}, -9), u("μ", new String[] {"\uFFFD","u","μ","\u00B5","~","micro","Micro"}, -6), m("m",new String[] {"m","Mili","mili"},-3), c("c", -2), d("d", -1),Empty("", 0),
+    da("da", 1), h("h", 2), k("k",new String[] {"k","Kilo","kilo"}, 3), M("M",new String[] {"M","Mega","mega"},6), G("G",new String[] {"G","Giga","giga"},9), T("T", 12);
 
-    public static int LOWEST_EXPONENT = -15;
-    public static int HIGHEST_EXPONENT = 12;
+    public final static int LOWEST_EXPONENT = -15;
+    public final static int HIGHEST_EXPONENT = 12;
 
     private final int exponent;
     private final String key;
